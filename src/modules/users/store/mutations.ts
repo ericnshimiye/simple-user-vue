@@ -3,6 +3,7 @@ import { IUsersState } from "./state";
 export interface IUsersMutations {
   setUsers(state: IUsersState, users: any[]): void;
   addUser(state: IUsersState, user: any): void;
+  setUserCreationErrors(state: IUsersState, errors: any): void;
 }
 
 export const UsersMutations: IUsersMutations = {
@@ -11,5 +12,8 @@ export const UsersMutations: IUsersMutations = {
   },
   addUser: (state, { user }) => {
     state.users.push(user);
+  },
+  setUserCreationErrors: (state, errors) => {
+    state.userCreationErrors = errors || {};
   }
 };

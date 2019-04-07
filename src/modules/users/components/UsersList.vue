@@ -93,8 +93,6 @@ export default class UsersList extends Vue {
     email: ""
   };
 
-  public errors: any = {};
-
   public createUser() {
     this.formVisible = true;
   }
@@ -102,7 +100,7 @@ export default class UsersList extends Vue {
   private resetForm() {
     this.form.firstName = "";
     this.form.lastName = "";
-    this.errors = {};
+    this.$store.dispatch("users/resetUserCreationErrors");
   }
 
   public closeForm() {
@@ -115,10 +113,6 @@ export default class UsersList extends Vue {
 
     addUserPromise.then(() => {
       this.formVisible = false;
-    });
-
-    addUserPromise.catch((error: any) => {
-      this.errors = error.response.data;
     });
   }
 
@@ -150,8 +144,12 @@ export default class UsersList extends Vue {
     return this.$store.state.users.users;
   }
 
+  get errors() {
+    return this.$store.state.users.userCreationErrors;
+  }
+
   get gotErrors() {
-    return Object.keys(this.errors).length > 0;
+    return Object.keys(this.$store.state.users.userCreationErrors).length > 0;
   }
 
   mounted() {

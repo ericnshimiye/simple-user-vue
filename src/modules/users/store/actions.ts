@@ -11,6 +11,7 @@ export interface IUsersActions {
     context: ActionContext<IUsersState, IState>,
     data: any
   ): Promise<any>;
+  resetUserCreationErrors(context: ActionContext<IUsersState, IState>): void;
 }
 
 export const UsersActions: IUsersActions = {
@@ -25,6 +26,10 @@ export const UsersActions: IUsersActions = {
     addUserPromise.then((response: AxiosResponse<any>) => {
       const payload: any[] = response && response.data;
       commit("addUser", { user: payload });
+      commit("setUserCreationErrors", {});
+    });
+    addUserPromise.catch((error: any) => {
+      commit("setUserCreationErrors", error.response.data);
     });
     return addUserPromise;
   },
@@ -33,5 +38,8 @@ export const UsersActions: IUsersActions = {
       const payload: any[] = response && response.data;
       commit("setUsers", payload);
     });
+  },
+  resetUserCreationErrors({ commit }): any {
+    commit("setUserCreationErrors", {});
   }
 };
