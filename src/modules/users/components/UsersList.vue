@@ -2,12 +2,12 @@
   <div>
     <h2>Secret users list</h2>
     <p>This is the very secret list of users.</p>
-    <el-button @click="createUser">new user</el-button>
+    <el-button @click="openForm">new user</el-button>
 
     <el-table :data="users" row-key="idUser" empty-text="No user">
       <el-table-column prop="firstName" label="First name" />
       <el-table-column prop="lastName" label="Last name" />
-      <el-table-column prop="gender" label="Gender" />
+      <el-table-column prop="email" label="Email" />
       <el-table-column>
         <template slot-scope="scope">
           <el-button
@@ -61,7 +61,7 @@
       </el-form>
       <span slot="footer" class="dialog-footer">
         <el-button @click.native="formVisible = false">Cancel</el-button>
-        <el-button type="primary" @click.native="saveForm">Create</el-button>
+        <el-button type="primary" @click.native="submitForm">Create</el-button>
       </span>
     </el-dialog>
   </div>
@@ -93,13 +93,14 @@ export default class UsersList extends Vue {
     email: ""
   };
 
-  public createUser() {
+  public openForm() {
     this.formVisible = true;
   }
 
   private resetForm() {
     this.form.firstName = "";
     this.form.lastName = "";
+    this.form.email = "";
     this.$store.dispatch("users/resetUserCreationErrors");
   }
 
@@ -108,7 +109,7 @@ export default class UsersList extends Vue {
     this.resetForm();
   }
 
-  public saveForm() {
+  public submitForm() {
     const addUserPromise = this.$store.dispatch("users/addUser", this.form);
 
     addUserPromise.then(() => {
