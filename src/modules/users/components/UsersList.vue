@@ -1,12 +1,8 @@
 <template>
   <div>
-    <h2>Test users list</h2>
-    <p>
-      This is the very secret list of users.
-      <code v-text="'<el-button>'"></code>
-      below
-    </p>
-    <el-button>new user</el-button>
+    <h2>Secret users list</h2>
+    <p>This is the very secret list of users.</p>
+    <el-button @click="createUser">new user</el-button>
 
     <el-table :data="users" row-key="idUser" empty-text="No user">
       <el-table-column prop="firstName" label="First name" />
@@ -24,13 +20,56 @@
       </el-table-column>
     </el-table>
 
-    <el-dialog></el-dialog>
+    <el-dialog
+      title="Add a user"
+      :visible.sync="formVisible"
+      @close="closeForm"
+    >
+      <el-alert
+        type="error"
+        title="error alert"
+        :show-icon="true"
+        :closable="false"
+        :center="false"
+        v-if="gotErrors"
+        description="You form contains errors, please fix them and submit."
+      />
+
+      <el-form
+        :model="form"
+        ref="form"
+        :close-on-click-modal="false"
+        :close-on-press-escape="false"
+      >
+        <el-form-item
+          label="First name"
+          prop="firstName"
+          :error="errors.firstName"
+        >
+          <el-input type="text" v-model="form.firstName"></el-input>
+        </el-form-item>
+        <el-form-item
+          label="Last name"
+          prop="lastName"
+          :error="errors.lastName"
+        >
+          <el-input type="text" v-model="form.lastName"></el-input>
+        </el-form-item>
+        <el-form-item label="Email" prop="email" :error="errors.email">
+          <el-input type="text" v-model="form.email"></el-input>
+        </el-form-item>
+      </el-form>
+      <span slot="footer" class="dialog-footer">
+        <el-button @click.native="formVisible = false">Cancel</el-button>
+        <el-button type="primary" @click.native="saveForm">Create</el-button>
+      </span>
+    </el-dialog>
   </div>
 </template>
 
 <script lang="ts">
 import Vue from "vue";
-import { Component } from "vue-property-decorator";
+import { Component, Prop } from "vue-property-decorator";
 import {
   IElementConfirm,
   IElementMessage
@@ -46,6 +85,43 @@ declare module "vue/types/vue" {
 
 @Component
 export default class UsersList extends Vue {
+  public formVisible: boolean = false;
+
+  public form: any = {
+    firstName: "",
+    lastName: "",
+    email: ""
+  };
+
+  public errors: any = {};
+
+  public createUser() {
+    this.formVisible = true;
+  }
+
+  private resetForm() {
+    this.form.firstName = "";
+    this.form.lastName = "";
+    this.errors = {};
+  }
+
+  public closeForm() {
+    this.formVisible = false;
+    this.resetForm();
+  }
+
+  public saveForm() {
+    const addUserPromise = this.$store.dispatch("users/addUser", this.form);
+
+    addUserPromise.then(() => {
+      this.formVisible = false;
+    });
+
+    addUserPromise.catch((error: any) => {
+      this.errors = error.response.data;
+    });
+  }
+
   private fetchUsers() {
     this.$store.dispatch("users/getUsers");
   }
@@ -72,6 +148,10 @@ export default class UsersList extends Vue {
 
   get users() {
     return this.$store.state.users.users;
+  }
+
+  get gotErrors() {
+    return Object.keys(this.errors).length > 0;
   }
 
   mounted() {
