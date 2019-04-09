@@ -3,6 +3,7 @@ import { IState } from "@/store/state";
 import { IUsersState } from "../store/state";
 import * as usersApi from "../api/users";
 import { AxiosResponse } from "axios";
+import { IUserCreationInfo } from "../definitions/userDefinition";
 
 export interface IUsersActions {
   getUsers(context: ActionContext<IUsersState, IState>): Promise<any>;
@@ -21,10 +22,10 @@ export const UsersActions: IUsersActions = {
       commit("setUsers", payload);
     });
   },
-  addUser({ commit }, { firstName, lastName, email }): any {
-    const addUserPromise = usersApi.addUser(firstName, lastName, email);
+  addUser({ commit }, user: IUserCreationInfo): any {
+    const addUserPromise = usersApi.addUser(user);
     addUserPromise.then((response: AxiosResponse<any>) => {
-      const payload: any[] = response && response.data;
+      const payload: any = response && response.data;
       commit("addUser", { user: payload });
       commit("setUserCreationErrors", {});
     });

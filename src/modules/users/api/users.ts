@@ -1,4 +1,5 @@
 import axios from "axios";
+import { IUserCreationInfo } from "../definitions/userDefinition";
 
 export const getUsers = () => {
   return axios.get("/api/users");
@@ -8,6 +9,6 @@ export const deleteUser = (id: number) => {
   return axios.delete(`/api/users/${id}`);
 };
 
-export const addUser = (firstName: string, lastName: string, email: string) => {
-  return axios.post("/api/users", { firstName, lastName, email });
+export const addUser = (user: IUserCreationInfo) => {
+  return axios.post("/api/users", user);
 };
