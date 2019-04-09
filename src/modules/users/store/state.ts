@@ -4,6 +4,7 @@ export interface IUsersState {
   users: any[];
   userCreationErrors: any;
   currentUser: IUserInfo;
+  userUpdateErrors: any;
 }
 
 export const DefaultUsersState = (): IUsersState => {
@@ -17,6 +18,7 @@ export const DefaultUsersState = (): IUsersState => {
       gender: "",
       province: "",
       superUser: false
-    }
+    },
+    userUpdateErrors: {}
   };
 };

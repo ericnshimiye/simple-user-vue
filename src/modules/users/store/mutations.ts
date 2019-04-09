@@ -6,6 +6,7 @@ export interface IUsersMutations {
   setUser(state: IUsersState, user: IUserInfo): void;
   addUser(state: IUsersState, user: any): void;
   setUserCreationErrors(state: IUsersState, errors: any): void;
+  setUserUpdateErrors(state: IUsersState, errors: any): void;
 }
 
 export const UsersMutations: IUsersMutations = {
@@ -20,5 +21,8 @@ export const UsersMutations: IUsersMutations = {
   },
   setUserCreationErrors: (state, errors) => {
     state.userCreationErrors = errors || {};
+  },
+  setUserUpdateErrors: (state, errors) => {
+    state.userUpdateErrors = errors || {};
   }
 };
