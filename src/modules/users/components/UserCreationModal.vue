@@ -54,6 +54,8 @@ import { IUserCreationInfo } from "@/modules/users/definitions/userDefinition.ts
 
 @Component
 export default class UserCreationModal extends Vue {
+  @Prop() public errors!: any;
+
   public formVisible: boolean = false;
 
   public form: any = {
@@ -62,36 +64,24 @@ export default class UserCreationModal extends Vue {
     email: ""
   };
 
-  get errors() {
-    return this.$store.state.users.userCreationErrors;
-  }
-
   get gotErrors() {
-    return Object.keys(this.$store.state.users.userCreationErrors).length > 0;
+    return Object.keys(this.errors).length > 0;
   }
 
   public showForm() {
     this.formVisible = true;
   }
 
-  private resetForm() {
-    this.form.firstName = "";
-    this.form.lastName = "";
-    this.form.email = "";
-    this.$store.dispatch("users/resetUserCreationErrors");
-  }
-
   public submitForm() {
-    const addUserPromise = this.$store.dispatch("users/addUser", this.form);
-
-    addUserPromise.then(() => {
-      this.formVisible = false;
-    });
+    this.$emit("submit", this.form);
   }
 
   public closeForm() {
     this.formVisible = false;
-    this.resetForm();
+    this.form.firstName = "";
+    this.form.lastName = "";
+    this.form.email = "";
+    this.$emit("close");
   }
 }
 </script>

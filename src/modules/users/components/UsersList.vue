@@ -20,7 +20,12 @@
       </el-table-column>
     </el-table>
 
-    <UserCreationModal ref="creationModal" />
+    <UserCreationModal
+      ref="creationModal"
+      @submit="onCreationModalSubmit"
+      @close="onCreationModalClose"
+      :errors="userCreationErrors"
+    />
   </div>
 </template>
 
@@ -51,6 +56,21 @@ export default class UsersList extends Vue {
 
   public openForm() {
     this.$refs.creationModal.showForm();
+  }
+
+  public onCreationModalSubmit(userInfo: any) {
+    const addUserPromise = this.$store.dispatch("users/addUser", userInfo);
+    addUserPromise.then(() => {
+      this.$refs.creationModal.closeForm();
+    });
+  }
+
+  public onCreationModalClose() {
+    this.$store.dispatch("users/resetUserCreationErrors");
+  }
+
+  get userCreationErrors() {
+    return this.$store.state.users.userCreationErrors;
   }
 
   private fetchUsers() {
