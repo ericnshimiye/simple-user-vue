@@ -1,13 +1,23 @@
 <template>
   <div id="app">
-    <router-view />
+    <el-container>
+      <el-header>
+        <Navbar />
+      </el-header>
+      <el-main>
+        <router-view />
+      </el-main>
+    </el-container>
   </div>
 </template>
 
 <script lang="ts">
 import { Vue, Component } from "vue-property-decorator";
+import Navbar from "@/components/Navbar.vue";
 
-@Component
+@Component({
+  components: { Navbar }
+})
 export default class App extends Vue {}
 </script>
 
