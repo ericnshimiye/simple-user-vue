@@ -4,7 +4,13 @@
     <p>This is the very secret list of users.</p>
     <el-button @click="openForm">new user</el-button>
 
-    <el-table :data="users" row-key="idUser" empty-text="No user">
+    <el-table
+      :data="users"
+      row-key="idUser"
+      empty-text="No user"
+      @current-change="selectUser"
+      :highlight-current-row="true"
+    >
       <el-table-column prop="firstName" label="First name" />
       <el-table-column prop="lastName" label="Last name" />
       <el-table-column prop="email" label="Email" />
@@ -19,6 +25,10 @@
         </template>
       </el-table-column>
     </el-table>
+    <br />
+    <el-button :disabled="selectedUser === null" @click="editUser"
+      >Modify user</el-button
+    >
 
     <UserCreationModal
       ref="creationModal"
@@ -53,6 +63,8 @@ export default class UsersList extends Vue {
   public $refs!: {
     creationModal: UserCreationModal;
   };
+
+  public selectedUser: any = null;
 
   public openForm() {
     this.$refs.creationModal.showForm();
@@ -99,6 +111,17 @@ export default class UsersList extends Vue {
 
   get users() {
     return this.$store.state.users.users;
+  }
+
+  public selectUser(row: any) {
+    this.selectedUser = row;
+  }
+
+  editUser() {
+    this.$router.push({
+      name: "edit",
+      params: { idUser: this.selectedUser.idUser }
+    });
   }
 
   mounted() {
