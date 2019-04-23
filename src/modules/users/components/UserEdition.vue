@@ -13,7 +13,7 @@
         prop="firstName"
         :error="errors.firstName"
       >
-        <el-input type="text" v-model="user.firstName"></el-input>
+        <el-input type="text" v-model="firstName"></el-input>
       </el-form-item>
       <el-form-item label="Last name" prop="lastName" :error="errors.lastName">
         <el-input type="text" v-model="user.lastName"></el-input>
@@ -40,7 +40,7 @@
         </el-select>
       </el-form-item>
       <el-form-item label="Super user" prop="superUser">
-        <el-switch v-model="user.superUser"> </el-switch>
+        <el-checkbox v-model="superUser"></el-checkbox>
       </el-form-item>
       <el-form-item label="Province" prop="province" :error="errors.province">
         <el-select v-model="user.provinces">
@@ -61,8 +61,15 @@
 import Vue from "vue";
 import { Component, Prop } from "vue-property-decorator";
 import { GENDERS, PROVINCES } from "../definitions/common";
+import { IUserInfo, DefaultUser } from "../definitions/userDefinition";
 
-@Component
+@Component({
+  beforeRouteLeave(to, from, next) {
+    this.$store.dispatch("users/setUser", DefaultUser);
+    this.$store.dispatch("users/resetUserUpdateErrors", {});
+    next();
+  }
+})
 export default class UserEdition extends Vue {
   @Prop() public idUser!: number;
 
@@ -79,7 +86,7 @@ export default class UserEdition extends Vue {
   }
 
   get errors() {
-    return {};
+    return this.$store.state.users.userUpdateErrors;
   }
 
   public fetchUser() {
@@ -88,7 +95,86 @@ export default class UserEdition extends Vue {
     });
   }
 
-  public saveUser() {}
+  get firstName() {
+    return this.user.firstName;
+  }
+
+  set firstName(value: String) {
+    const newUser: IUserInfo = {
+      ...this.user,
+      firstName: value
+    };
+    this.$store.dispatch("users/setUser", newUser);
+  }
+
+  get lastName() {
+    return this.user.lastName;
+  }
+
+  set lastName(value: String) {
+    const newUser: IUserInfo = {
+      ...this.user,
+      lastName: value
+    };
+    this.$store.dispatch("users/setUser", newUser);
+  }
+
+  get email() {
+    return this.user.email;
+  }
+
+  set email(value: String) {
+    const newUser: IUserInfo = {
+      ...this.user,
+      email: value
+    };
+    this.$store.dispatch("users/setUser", newUser);
+  }
+
+  get gender() {
+    return this.user.gender;
+  }
+
+  set gender(value: String) {
+    const newUser: IUserInfo = {
+      ...this.user,
+      gender: value
+    };
+    this.$store.dispatch("users/setUser", newUser);
+  }
+
+  get province() {
+    return this.user.province;
+  }
+
+  set province(value: String) {
+    const newUser: IUserInfo = {
+      ...this.user,
+      province: value
+    };
+    this.$store.dispatch("users/setUser", newUser);
+  }
+
+  get superUser() {
+    return this.user.superUser;
+  }
+
+  set superUser(value: Boolean) {
+    const newUser: IUserInfo = {
+      ...this.user,
+      superUser: value
+    };
+    this.$store.dispatch("users/setUser", newUser);
+  }
+
+  public saveUser() {
+    this.$store.dispatch("users/updateUser").then(() => {
+      this.$message({
+        type: "success",
+        message: "user was saved successfully."
+      });
+    });
+  }
 
   mounted() {
     this.fetchUser();
